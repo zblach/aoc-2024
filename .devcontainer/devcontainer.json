@@ -5,11 +5,11 @@
     "vscode": {
       "extensions": [
         "sswg.swift-lang"
-      ]
+      ],
+      "settings": {
+        "lldb.library": "/usr/lib/liblldb.so"
+      }
     }
-  },
-  "settings": {
-    "lldb.library": "/usr/lib/liblldb.so"
   },
   "forwardPorts": [
     8080

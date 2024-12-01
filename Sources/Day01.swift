@@ -5,39 +5,37 @@ struct Day01: AdventDay {
   var data: String
 
   // Splits input data into its component parts and convert from string.
-  var entities: [(Int, Int)] {
-    data.split(separator: "\n").map {
-      let nums = $0.split(separator: " ")
-      return (Int(nums[0])!, Int(nums[1])!)
+  var entities: [(a: Int, b: Int)] {
+    data.split(separator: "\n").map { line in
+      let numbers = line.split(separator: " ")
+      return (a: Int(numbers[0])!, b: Int(numbers[1])!)
     }
   }
 
-  var sortedData: ([Int], [Int]) {
-    var A = [Int]()
-    var B = [Int]()
-
-    entities.forEach {
-      A.append($0.0)
-      B.append($0.1)
+  var sortedPairs: (a: [Int], b: [Int]) {
+    let (a, b) = entities.reduce(into: ([Int](), [Int]())) { result, pair in
+      result.0.append(pair.a)
+      result.1.append(pair.b)
     }
-
-    A.sort()
-    B.sort()
-
-    return (A, B)
+    return (a: a.sorted(), b: b.sorted())
   }
 
   // Replace this with your solution for the first part of the day's challenge.
   func part1() -> Any {
-    return zip(sortedData.0, sortedData.1).map { abs($0 - $1) }.reduce(0, +)
-
+    zip(sortedPairs.a, sortedPairs.b)
+      .map { abs($0 - $1) }
+      .reduce(0, +)
   }
 
   func part2() -> Any {
-    var bFreq = [Int: Int]()
-    sortedData.1.forEach { bFreq[$0, default: 0] += 1 }
+    let bFrequencies = Dictionary(
+      grouping: sortedPairs.b,
+      by: { $0 }
+    ).mapValues { $0.count }
 
-    return sortedData.0.map { $0 * bFreq[$0, default: 0] }.reduce(0, +)
+    return sortedPairs.a
+      .map { $0 * (bFrequencies[$0] ?? 0) }
+      .reduce(0, +)
   }
 
   // Replace this with your solution for the second part of the day's challenge.
