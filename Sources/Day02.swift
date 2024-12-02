@@ -13,18 +13,13 @@ struct Day02: AdventDay {
 
   func part1() -> Any {
     entities.count {
-      isOrdered($0) && gapWidth($0, width: 3)
+      okay($0)
     }
   }
 
-  func isOrdered(_ l: [Int]) -> Bool {
-    guard !l.isEmpty else { return true }
-    return zip(l, l.dropFirst()).allSatisfy(<)
-      || zip(l, l.dropFirst()).allSatisfy(>)
-  }
-
-  func gapWidth(_ l: [Int], width: Int) -> Bool {
-    l.adjacentPairs().allSatisfy { (1...width).contains(abs($0 - $1)) }
+  func okay(_ l: [Int]) -> Bool {
+    let ap = l.adjacentPairs()
+    return (ap.allSatisfy(<) || ap.allSatisfy(>)) && ap.allSatisfy { abs($0 - $1) <= 3 }
   }
 
   func part2() -> Any {
@@ -32,7 +27,7 @@ struct Day02: AdventDay {
       arr.indices.contains { i in
         var subset = arr
         subset.remove(at: i)
-        return isOrdered(subset) && gapWidth(subset, width: 3)
+        return okay(subset)
       }
     }.count
   }
