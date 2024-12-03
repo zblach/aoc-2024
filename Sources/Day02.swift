@@ -11,24 +11,20 @@ struct Day02: AdventDay {
     }
   }
 
-  func part1() -> Any {
-    entities.count {
-      okay($0)
-    }
-  }
-
   func okay(_ l: [Int]) -> Bool {
     let ap = l.adjacentPairs()
     return (ap.allSatisfy(<) || ap.allSatisfy(>)) && ap.allSatisfy { abs($0 - $1) <= 3 }
   }
 
+  func part1() -> Any {
+    entities.count(where: okay)
+  }
+
   func part2() -> Any {
-    entities.filter { arr in
-      arr.indices.contains { i in
-        var subset = arr
-        subset.remove(at: i)
-        return okay(subset)
+    entities.count { nums in
+      nums.indices.contains { i in
+        okay(Array(nums.prefix(i) + nums.dropFirst(i + 1)))
       }
-    }.count
+    }
   }
 }
