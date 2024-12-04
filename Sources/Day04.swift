@@ -17,34 +17,23 @@ struct Day04: AdventDay {
     let width = entities[0].count
     var count = 0
 
-    func checkPattern(word: String, startRow: Int, startCol: Int, rowDelta: Int, colDelta: Int)
-      -> Bool
-    {
+    func checkPattern(word: String, cell: (r: Int, c: Int), delta: (x: Int, y: Int)) -> Bool {
       word.enumerated().allSatisfy { index, char in
-        let row = startRow + (rowDelta * index)
-        let col = startCol + (colDelta * index)
+        let (row, col) = (cell.r + (delta.x * index), cell.c + (delta.y * index))
 
-        guard row >= 0, row < height, col >= 0, col < width else { return false }
+        guard (0..<height).contains(row), (0..<width).contains(col) else { return false }
+
         return entities[row][col] == char
       }
     }
 
     // Check all positions and directions
-    for (dx, dy) in [
-      (0, 1),
-      (0, -1),
-      (1, 0),
-      (-1, 0),
-      (1, 1),
-      (-1, -1),
-      (1, -1),
-      (-1, 1),
+    for delta: (x: Int, y: Int) in [
+      (0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (1, -1), (-1, 1),
     ] {
       for row in 0..<height {
         for col in 0..<width {
-          count +=
-            checkPattern(word: "XMAS", startRow: row, startCol: col, rowDelta: dx, colDelta: dy)
-            ? 1 : 0
+          count += checkPattern(word: "XMAS", cell: (row, col), delta: delta) ? 1 : 0
         }
       }
     }
@@ -74,13 +63,11 @@ struct Day04: AdventDay {
           let d = entities[row + 2][col + 2]
 
           // Check all corners are either M or S
-          guard Set([a, b, c, d]) == Set(["M", "S"]) else {
-            continue
-          }
+          let corners: Set<Character> = ["M", "S"]
+          guard [a, b, c, d].allSatisfy(corners.contains) else { continue }
 
-          if a != d && b != c {
-            count += 1
-          }
+          // Check that diagonals differ
+          count += a != d && b != c ? 1 : 0
         }
       }
     }
