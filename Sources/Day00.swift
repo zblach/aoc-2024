@@ -5,8 +5,11 @@ struct Day00: AdventDay {
   var data: String
 
   // Splits input data into its component parts and convert from string.
-  var entities: [[Int]] {
-    data.split(separator: "\n\n").map {
+  var entities: [[Int]]
+
+  init(data: String) {
+    self.data = data
+    self.entities = data.split(separator: "\n\n").map {
       $0.split(separator: "\n").compactMap { Int($0) }
     }
   }
