@@ -45,6 +45,8 @@ struct Day04: AdventDay {
     let width = entities[0].count
     var count = 0
 
+    let ms: Set<Character> = ["M", "S"]
+
     // Check each possible 3x3 grid position
     for row in 0...(height - 3) {
       for col in 0...(width - 3) {
@@ -54,7 +56,7 @@ struct Day04: AdventDay {
         // .A.
         // c.d
 
-        // 'A' is a literal A. we care about the a-d corners too.
+        // 'A' is a literal A. a-d are the corners that must be either M or S.
 
         if entities[row + 1][col + 1] == "A" {
           let a = entities[row][col]
@@ -62,12 +64,13 @@ struct Day04: AdventDay {
           let c = entities[row + 2][col]
           let d = entities[row + 2][col + 2]
 
-          // Check all corners are either M or S
-          let corners: Set<Character> = ["M", "S"]
-          guard [a, b, c, d].allSatisfy(corners.contains) else { continue }
+          // Check all corners are either M or S.
+          guard [a, b, c, d].allSatisfy(ms.contains) else { continue }
 
-          // Check that diagonals differ
-          count += a != d && b != c ? 1 : 0
+          // Check that diagonals differ. MAM and SAS aren't allowed.
+          guard a != d, b != c else { continue }
+
+          count += 1
         }
       }
     }
