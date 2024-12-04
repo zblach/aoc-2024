@@ -15,7 +15,6 @@ struct Day04: AdventDay {
   func part1() -> Any {
     let height = entities.count
     let width = entities[0].count
-    var count = 0
 
     func checkPattern(word: String, cell: (r: Int, c: Int), delta: (x: Int, y: Int)) -> Bool {
       word.enumerated().allSatisfy { index, char in
@@ -27,54 +26,44 @@ struct Day04: AdventDay {
       }
     }
 
-    // Check all positions and directions
-    for delta: (x: Int, y: Int) in [
+    let directions = [
       (0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (1, -1), (-1, 1),
-    ] {
-      for row in 0..<height {
-        for col in 0..<width {
-          count += checkPattern(word: "XMAS", cell: (row, col), delta: delta) ? 1 : 0
-        }
-      }
+    ]
+
+    return product(0..<height, 0..<width).reduce(0) { sum, pos in
+      sum + directions.count { delta in checkPattern(word: "XMAS", cell: pos, delta: delta) }
     }
-    return count
+
   }
 
   func part2() -> Any {
     let height = entities.count
     let width = entities[0].count
-    var count = 0
 
     let ms: Set<Character> = ["M", "S"]
 
     // Check each possible 3x3 grid position
-    for row in 0...(height - 3) {
-      for col in 0...(width - 3) {
+    return product(0..<(height - 2), 0..<(width - 2)).count { row, col in
+      // Check if this 3x3 grid matches the pattern:
+      // a.b
+      // .A.
+      // c.d
 
-        // Check if this 3x3 grid matches the pattern:
-        // a.b
-        // .A.
-        // c.d
+      // 'A' is a literal A. a-d are the corners that must be either M or S.
+      guard entities[row + 1][col + 1] == "A" else { return false }
 
-        // 'A' is a literal A. a-d are the corners that must be either M or S.
+      let a = entities[row][col]
+      let b = entities[row][col + 2]
+      let c = entities[row + 2][col]
+      let d = entities[row + 2][col + 2]
 
-        if entities[row + 1][col + 1] == "A" {
-          let a = entities[row][col]
-          let b = entities[row][col + 2]
-          let c = entities[row + 2][col]
-          let d = entities[row + 2][col + 2]
+      // Check all corners are either M or S.
+      guard [a, b, c, d].allSatisfy(ms.contains) else { return false }
 
-          // Check all corners are either M or S.
-          guard [a, b, c, d].allSatisfy(ms.contains) else { continue }
+      // Check that diagonals differ. MAM and SAS aren't allowed.
+      guard a != d, b != c else { return false }
 
-          // Check that diagonals differ. MAM and SAS aren't allowed.
-          guard a != d, b != c else { continue }
-
-          count += 1
-        }
-      }
+      return true
     }
-
-    return count
   }
 }
